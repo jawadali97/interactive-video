@@ -1,11 +1,15 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import SourceHandle from '../Handles/SourceHandle';
 import TargetHandle from '../Handles/TargetHandle';
 
-function StoryBlock({ data, isConnectable }) {
+function StoryBlock({ data, numTargetHandles, isConnectable }) {
 
-  const { description, title } = data;
+  const { description, title, isStartNode } = data;
   const [targetHandles, setTargetHandles] = useState([0]);
+
+  useEffect(() => {
+    
+  });
 
   const onChange = useCallback((evt) => {
     console.log(evt.target.value);
@@ -13,6 +17,7 @@ function StoryBlock({ data, isConnectable }) {
 
   return (
     <div className="story-node">
+      {isStartNode && <div className='start-text'>start</div>}
       <div className='node-content'>
         <div className='node-title'>{title}</div>
         <div className='node-desc'>{description}</div>

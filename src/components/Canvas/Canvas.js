@@ -1,6 +1,7 @@
 
 import { Box, Paper } from '@mui/material';
 import Flow from './Flow';
+import BlockFormular from '../Formular/BlockFormular';
 
 const Canvas = () => {
     return (
@@ -15,6 +16,7 @@ const Canvas = () => {
             }} >
                 <Flow />
             </Paper>
+            <BlockFormular/>
         </Box>
     )
 }

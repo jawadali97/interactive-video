@@ -13,14 +13,25 @@ import StoryBlock from '../CustomNode/StoryBlock';
 
 function Flow() {
 
-    const [nodes, setNodes] = useState([]);
+    const [nodes, setNodes] = useState([
+        {
+            id: `${0}`,
+            type: 'storyNode',
+            data: {
+                title: `Start Node`,
+                isStartNode: true,
+                description: `This is choice ${0} and testing with fake sample data. Description only displayed in two lines.`
+            },
+            numTargetHandles: 3,
+            position: { x: 200, y: 400 },
+        }
+    ]);
+
     const [edges, setEdges] = useState([]);
     const nodeTypes = useMemo(() => ({ storyNode: StoryBlock }), []); // Register our Story block as node type
 
     const onAddblockClicked = () => {
-        console.log('Button clicked..')
         setNodes((preState) => {
-
             return [...preState, {
                 id: `${preState.length + 1}`,
                 type: 'storyNode',
