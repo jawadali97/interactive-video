@@ -6,6 +6,10 @@ const Navbar = () => {
 
     const [openPlayer, setOpenPlayer] = useState(false);
     
+    const onExportClick = () => {
+        console.log('Video exported.');
+    }
+
     return (
         <>
         {openPlayer && <VideoPlayer onClose={() => setOpenPlayer(!openPlayer) }/>}
@@ -21,7 +25,11 @@ const Navbar = () => {
                 sx={{ marginRight: '50px ' }}
                 onClick={() => setOpenPlayer(!openPlayer)}
             >Play</Button>
-            <Button size="small" variant="contained">Export</Button>
+            <Button
+                size="small"
+                variant="contained"
+                onClick={onExportClick}
+            >Export</Button>
         </Box>
         </>
     )

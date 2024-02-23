@@ -1,36 +1,46 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import './styles.css'
 
 function VideoPlayer({onClose}) {
-    const selectedNode = useSelector(state => state.RFState.selectedNode);
+    const nodes = useSelector(state => state.RFState.nodes);
+    const edges = useSelector(state => state.RFState.edges);
 
-    const [currentVideo, setCurrentVideo] = useState('blob:http://localhost:3000/b05ff4dc-1b55-48fe-b901-3a4c7d012591');
+    const [currentVideo, setCurrentVideo] = useState('');
     const [showOptions, setShowOptions] = useState(false);
+    const [currentNode, setCurrentNode] = useState({});
     const videoRef = useRef(null);
 
     useEffect(() => {
-        // Resetting showOptions when the video changes
-        setShowOptions(false);
-        if (selectedNode && selectedNode.data) {
-            setCurrentVideo(selectedNode.data.media.url);
+        const startNode = nodes.find(node => node.data.isStartNode);
+        setCurrentNode(startNode);
+        if (startNode) {
+            setCurrentVideo(startNode.data.media.url);
         }
     }, []);
 
-    const onTimeUpdate = () => {
-        const videoCurrentTime = videoRef.current.currentTime;
-        const pauseTime = 10; // time in seconds when the video should pause
-
-        if (videoCurrentTime >= pauseTime && !showOptions) {
-            videoRef.current.pause();
+    const onVideoEnded = () => {
+        const connectedEdge = edges.find(edge => edge.source === currentNode.id);
+        if (connectedEdge) {
             setShowOptions(true);
         }
-    };
+    }
 
-    const handleOptionSelect = (videoUrl) => {
-        setCurrentVideo(videoUrl);
-        setShowOptions(false);
-        if (videoRef.current) {
-            videoRef.current.play();
+    const handleOptionSelect = (choice) => {
+        const connectedEdge = edges.find(edge => edge.sourceHandle === choice.id);
+        if (connectedEdge) {
+            const nextNodeId = connectedEdge.target;
+            const nextNode = nodes.find(node => node.id === nextNodeId);
+
+            setCurrentNode(nextNode);
+            if (nextNode) {
+                setCurrentVideo(nextNode.data.media.url);
+            }
+            setShowOptions(false);
+
+            // if (videoRef.current) {
+            //     videoRef.current.play();
+            // }
         }
     };
 
@@ -38,22 +48,29 @@ function VideoPlayer({onClose}) {
         <div className='wrap-player'>
             <div className='player'>
                 <button className='close-btn' onClick={onClose}>X</button>
-                <video
-                    ref={videoRef} 
-                    src={currentVideo} 
-                    controls 
-                    onTimeUpdate={onTimeUpdate}
-                    autoPlay
-                    width="100%" 
-                    height="100%"
-                />
-
-                {showOptions && (
-                    <div>
-                        <button onClick={() => handleOptionSelect('newVideoUrl1.mp4')}>Play Video 1</button>
-                        <button onClick={() => handleOptionSelect('newVideoUrl2.mp4')}>Play Video 2</button>
-                    </div>
-                )}
+                    {showOptions ? (
+                        <div className='btns-container'>
+                            {!currentNode.data.onscreenQuestion.hide && <span>{currentNode.data.onscreenQuestion.question}</span>}
+                            <div className='wrap-btns'>
+                                {currentNode?.data?.onscreenChoices.map((choice, index) => (
+                                    <button className='btn'
+                                            key={choice.id}
+                                            onClick={() => handleOptionSelect(choice)}>
+                                        {choice.buttonText || `Button ${index}`}
+                                    </button>
+                                ))}
+                            </div>
+                        </div> 
+                    )
+                    : <video
+                        ref={videoRef} 
+                        src={currentVideo} 
+                        controls 
+                        onEnded={onVideoEnded}
+                        autoPlay
+                        width="100%" 
+                        height="100%"
+                    />}
             </div>
         </div>
     );
