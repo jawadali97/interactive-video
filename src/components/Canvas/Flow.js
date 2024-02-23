@@ -1,62 +1,39 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Add } from '@mui/icons-material';
 import { Fab } from '@mui/material';
 
 import ReactFlow, {
     Controls,
     Background,
-    applyNodeChanges,
-    applyEdgeChanges,
-    addEdge
+    useOnSelectionChange
 } from 'reactflow';
 import StoryBlock from '../CustomNode/StoryBlock';
+import { onNodesChange, addNode, onEdgesChange, onConnect, setSelectedNode } from '../../RTK/slices/nodeSlice';
+import { getDefaultNode } from '../../common';
+import CustomEdge from '../CustomEdge/CustomEdge';
 
 function Flow() {
 
-    const [nodes, setNodes] = useState([
-        {
-            id: `${0}`,
-            type: 'storyNode',
-            data: {
-                title: `Start Node`,
-                isStartNode: true,
-                description: `This is choice ${0} and testing with fake sample data. Description only displayed in two lines.`
-            },
-            numTargetHandles: 3,
-            position: { x: 200, y: 400 },
-        }
-    ]);
+    const nodes = useSelector((state) => state.RFState.nodes);
+    const edges = useSelector((state) => state.RFState.edges);
+    // const selectedNode = useSelector((state) => state.RFState.selectedNode);
+    const dispatch = useDispatch();
 
-    const [edges, setEdges] = useState([]);
     const nodeTypes = useMemo(() => ({ storyNode: StoryBlock }), []); // Register our Story block as node type
+    const edgeTypes = useMemo(() => ({ customEdge: CustomEdge }), []);
+
+    useOnSelectionChange({
+        onChange: ({nodes, edges}) => {
+            const selected = nodes.find(node => node.selected);
+            dispatch(setSelectedNode(selected));
+        }
+    })
 
     const onAddblockClicked = () => {
-        setNodes((preState) => {
-            return [...preState, {
-                id: `${preState.length + 1}`,
-                type: 'storyNode',
-                data: {
-                    title: `Choice ${preState.length + 1}`,
-                    description: `This is choice ${preState.length + 1} and testing with fake sample data. Description only displayed in two lines.`
-                },
-                position: { x: 100, y: 100 },
-            }]
-        });
+        const newNode = getDefaultNode();
+        dispatch(addNode(newNode));
     }
-
-    const onNodesChange = useCallback(
-        (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-        [],
-    );
-    const onEdgesChange = useCallback(
-        (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-        [],
-    );
-
-    const onConnect = useCallback(
-        (params) => setEdges((eds) => addEdge(params, eds)),
-        [],
-    );
 
     return (
         <div style={{ height: '100%' }}>
@@ -70,13 +47,17 @@ function Flow() {
             >
                 <Add />
             </Fab>
-            <ReactFlow nodes={nodes}
-                onNodesChange={onNodesChange}
-                edges={edges}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
+            <ReactFlow
+                nodes={nodes}
                 nodeTypes={nodeTypes}
-            // fitView
+                onNodesChange={(changes) => dispatch(onNodesChange(changes))}
+                edges={edges}
+                edgeTypes={edgeTypes}
+                onEdgesChange={(changes) => dispatch(onEdgesChange(changes))}
+                onConnect={(params) => dispatch(onConnect(params))}
+                selectNodesOnDrag={false}
+                onError={(code, message) => console.error('Error:: ', message)}
+                // fitView
             >
                 <Background />
                 <Controls style={{ bottom: '100px', marginLeft: '50px' }} />

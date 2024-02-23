@@ -1,37 +1,62 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import SourceHandle from '../Handles/SourceHandle';
 import TargetHandle from '../Handles/TargetHandle';
+import { nanoid } from '@reduxjs/toolkit';
+import {
+  useUpdateNodeInternals
+} from 'reactflow';
 
-function StoryBlock({ data, numTargetHandles, isConnectable }) {
-
-  const { description, title, isStartNode } = data;
-  const [targetHandles, setTargetHandles] = useState([0]);
+function StoryBlock({ id, data, isConnectable, selected }) {
+  
+  const { description, name, isStartNode, onscreenChoices } = data;
+  const updateNodeInternals = useUpdateNodeInternals();
 
   useEffect(() => {
-    
-  });
+    updateNodeInternals(id);
+  }, [onscreenChoices.length, updateNodeInternals])
 
-  const onChange = useCallback((evt) => {
-    console.log(evt.target.value);
-  }, []);
+  const getHandleStyle = (index) => {
+    const numOfHandles = onscreenChoices.length;
+    const h4 = [20, 40, 60, 80];
+    const h3 = [20, 50, 80];
+    const h2 = [30, 70];
+
+    if (numOfHandles === 4) {
+        return {top: h4[index]}
+    } else if (numOfHandles === 3) {
+        return {top: h3[index]}
+    } else if (numOfHandles === 2) {
+       return {top: h2[index]}
+    }
+  }
 
   return (
-    <div className="story-node">
+    <>
+    <div className="story-node" style={{borderColor: selected && '#0074e6'}}>
+
       {isStartNode && <div className='start-text'>start</div>}
       <div className='node-content'>
-        <div className='node-title'>{title}</div>
-        <div className='node-desc'>{description}</div>
+        <div className='node-title'>
+          {name || <span style={{color: 'grey'}}>Name</span>}
+        </div>
+        <div className='node-desc'>
+          {description || <span style={{color: 'grey'}}>Description</span>}
+        </div>
       </div>
 
-      <SourceHandle id={1} isConnectable={isConnectable} />
+    </div>
 
-      {targetHandles.map((handle, index) => (
-        <TargetHandle
-          id={index}
+    {!isStartNode && <TargetHandle id={nanoid()} isConnectable={isConnectable} />}
+
+      {onscreenChoices.map((choice, index) => (
+        <SourceHandle
+          key={choice.id}
+          id={choice.id}
           isConnectable={isConnectable}
+          styles={getHandleStyle(index)}
         />
       ))}
-    </div>
+    </>
   );
 }
 

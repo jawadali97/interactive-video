@@ -1,13 +1,34 @@
-import { Position, Handle } from "reactflow";
+import { getConnectedEdges,
+    Handle,
+    useNodeId,
+    useStore,
+    Position
+} from 'reactflow';
 
-const SourceHandle = ({ id, isConnectable }) => {
-    const handleId = `src-handle-${id + 1}`;
+const selector = (s) => ({
+    nodeInternals: s.nodeInternals,
+    edges: s.edges
+});
+
+const SourceHandle = ({ id, isConnectable, styles }) => {
+
+    const { nodeInternals, edges } = useStore(selector);
+    const nodeId = useNodeId();
+
+    const isValidConnection = (connection) => {
+        const node = nodeInternals.get(nodeId);
+        const connectedEdges = getConnectedEdges([node], edges);
+        return connectedEdges.length ? !connectedEdges.some(edge => edge.sourceHandle === connection.sourceHandle) : true;
+    };
+
     return (
         <Handle
-            id={handleId}
+            id={id}
             type='source'
-            position={Position.Left}
+            position={Position.Right}
+            style={{...styles, width: 8, height: 8}}
             isConnectable={isConnectable}
+            isValidConnection={isValidConnection}
         />
     )
 }

@@ -1,13 +1,12 @@
 import { Position, Handle } from "reactflow";
 
-const TargetHandle = ({ id, isConnectable }) => {
-    const handleId = `target-handle-${id + 1}`;
+const TargetHandle = ({ id, isConnectable, styles }) => {
     return (
         <Handle
-            id={handleId}
+            id={id}
             type='target'
-            position={Position.Right}
-            // style={{ top: 10 }}
+            position={Position.Left}
+            style={{width: 8, height: 8}}
             isConnectable={isConnectable}
         />
     )
