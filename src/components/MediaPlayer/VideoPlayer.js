@@ -10,6 +10,7 @@ function VideoPlayer({onClose}) {
     const [showOptions, setShowOptions] = useState(false);
     const [currentNode, setCurrentNode] = useState({});
     const videoRef = useRef(null);
+    const cloudinaryRef = useRef();
 
     useEffect(() => {
         const startNode = nodes.find(node => node.data.isStartNode);
@@ -17,6 +18,14 @@ function VideoPlayer({onClose}) {
         if (startNode) {
             setCurrentVideo(startNode.data.media.url);
         }
+
+        if ( cloudinaryRef.current ) return;
+
+        cloudinaryRef.current = window.cloudinary;
+        cloudinaryRef.current.videoPlayer(videoRef.current, {
+            cloud_name: 'interactive-video-cloud'
+        })
+
     }, []);
 
     const onVideoEnded = () => {
@@ -48,29 +57,32 @@ function VideoPlayer({onClose}) {
         <div className='wrap-player'>
             <div className='player'>
                 <button className='close-btn' onClick={onClose}>X</button>
-                    {showOptions ? (
-                        <div className='btns-container'>
-                            {!currentNode.data.onscreenQuestion.hide && <span>{currentNode.data.onscreenQuestion.question}</span>}
-                            <div className='wrap-btns'>
-                                {currentNode?.data?.onscreenChoices.map((choice, index) => (
-                                    <button className='btn'
-                                            key={choice.id}
-                                            onClick={() => handleOptionSelect(choice)}>
-                                        {choice.buttonText || `Button ${index}`}
-                                    </button>
-                                ))}
-                            </div>
-                        </div> 
-                    )
-                    : <video
-                        ref={videoRef} 
-                        src={currentVideo} 
-                        controls 
-                        onEnded={onVideoEnded}
-                        autoPlay
-                        width="100%" 
-                        height="100%"
-                    />}
+                <video
+                    ref={videoRef} 
+                    src={currentVideo} 
+                    controls 
+                    controlsList="nodownload noremoteplayback"
+                    onEnded={onVideoEnded}
+                    autoPlay
+                    width={1400}
+                    height={800}
+                />
+                {showOptions && (
+                    <div className='btns-container'>
+                        <div className='wrap-question'>
+                        {!currentNode?.data?.onscreenQuestion?.hide && <div className='qst-div'>{currentNode?.data?.onscreenQuestion?.question || "hello"}</div>}
+                        <div className='wrap-btns'>
+                            {currentNode?.data?.onscreenChoices.map((choice, index) => (
+                                <button className='btn'
+                                        key={choice.id}
+                                        onClick={() => handleOptionSelect(choice)}>
+                                    {choice.buttonText || `Button ${index}`}
+                                </button>
+                            ))}
+                        </div>
+                        </div>
+                    </div> 
+                )}
             </div>
         </div>
     );

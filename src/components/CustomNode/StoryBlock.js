@@ -13,7 +13,7 @@ function StoryBlock({ id, data, isConnectable, selected }) {
 
   useEffect(() => {
     updateNodeInternals(id);
-  }, [onscreenChoices.length, updateNodeInternals])
+  }, [JSON.stringify(onscreenChoices), updateNodeInternals])
 
   const getHandleStyle = (index) => {
     const numOfHandles = onscreenChoices.length;
@@ -49,12 +49,13 @@ function StoryBlock({ id, data, isConnectable, selected }) {
     {!isStartNode && <TargetHandle id={nanoid()} isConnectable={isConnectable} />}
 
       {onscreenChoices.map((choice, index) => (
-        <SourceHandle
-          key={choice.id}
-          id={choice.id}
-          isConnectable={isConnectable}
-          styles={getHandleStyle(index)}
-        />
+          <SourceHandle
+            key={choice.id}
+            id={choice.id}
+            isConnectable={isConnectable}
+            styles={getHandleStyle(index)}
+            tooltipTitle={`${index + 1} ${choice.buttonText && ` > ${choice.buttonText}`}`}
+          />
       ))}
     </>
   );

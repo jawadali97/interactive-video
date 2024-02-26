@@ -209,7 +209,8 @@ function BlockFormular() {
                                                     value={choice.buttonText}
                                                     onFocus={() => setFocusId(choice.id)}
                                                     onChange={e => onScreenchoiceChange(e, choice.id)}/>
-                                            <Button size="small"
+                                            {onscreenChoices.length > 1 &&
+                                                <Button size="small"
                                                     variant="text"
                                                     color='error'
                                                     startIcon={<Delete />}
@@ -217,7 +218,7 @@ function BlockFormular() {
                                                     className='mt-1'
                                                     onClick={() => onDeleteChoice(choice.id)}>
                                                 Delete Choice
-                                            </Button>
+                                            </Button>}
                                         </CustomTabPanel>
                                     )
                                 })}

@@ -4,13 +4,14 @@ import { getConnectedEdges,
     useStore,
     Position
 } from 'reactflow';
+import { Tooltip } from "@mui/material"
 
 const selector = (s) => ({
     nodeInternals: s.nodeInternals,
     edges: s.edges
 });
 
-const SourceHandle = ({ id, isConnectable, styles }) => {
+const SourceHandle = ({ id, isConnectable, styles, tooltipTitle }) => {
 
     const { nodeInternals, edges } = useStore(selector);
     const nodeId = useNodeId();
@@ -22,14 +23,16 @@ const SourceHandle = ({ id, isConnectable, styles }) => {
     };
 
     return (
-        <Handle
-            id={id}
-            type='source'
-            position={Position.Right}
-            style={{...styles, width: 8, height: 8}}
-            isConnectable={isConnectable}
-            isValidConnection={isValidConnection}
-        />
+        <Tooltip title={tooltipTitle} placement='left' arrow>
+            <Handle
+                id={id}
+                type='source'
+                position={Position.Right}
+                style={{...styles, width: 8, height: 8}}
+                isConnectable={isConnectable}
+                isValidConnection={isValidConnection}
+            />
+        </Tooltip>
     )
 }
 

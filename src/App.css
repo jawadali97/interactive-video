@@ -149,8 +149,8 @@ legend {
 }
 
 .player {
-  width: 100%;
-  height: auto;
+  width: 1400px;
+  height: 800px;
   margin: 50px 100px;
   background: white;
   display: flex;
