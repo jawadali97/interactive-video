@@ -132,7 +132,10 @@ function BlockFormular() {
                 description,
                 onscreenChoices,
                 onscreenQuestion,
-                media
+                media: {
+                    ...media,
+                    url: media.type === 'url' ? `${media.url}/download` : media.url
+                }
             }
         }
 

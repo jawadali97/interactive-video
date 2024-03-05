@@ -1,3 +1,40 @@
+.wrap-player {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .5);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1100;
+}
+  
+.player {
+    width: 1400px;
+    height: 800px;
+    margin: 50px 100px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    padding: 0.5rem;
+    /* border: 5px solid white; */
+    border-radius: 1rem;
+    position: relative;
+}
+  
+.close-btn {
+    background: white;
+    align-self: flex-end;
+    border: 2px solid grey;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    color: grey;
+    text-align: center;
+    margin: 10px 0;
+}
+
 .btns-container {
     position: absolute;
     left: 0;
@@ -12,7 +49,7 @@
 }
 
 .qst-div {
-    background: rgb(244 179 25 / 68%);
+    background: rgb(244 179 25 / 80%);
     border-radius: 10px;
     padding: 15px 30px;
     margin-bottom: 20px;
@@ -34,7 +71,7 @@
     width: 100%;
     color: black;
     border: 0;
-    background: rgb(244 179 25 / 68%);
+    background: rgb(244 179 25 / 80%);
     border-radius: 50px;
     padding: 10px;
     margin: 0 10px;
