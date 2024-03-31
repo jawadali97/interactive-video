@@ -7,7 +7,8 @@ import { Box,
     Select,
     MenuItem,
     Tab,
-    Tabs
+    Tabs,
+    InputAdornment
 } from "@mui/material"
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
@@ -96,7 +97,9 @@ function BlockFormular() {
     }
 
     const onScreenchoiceChange = (e, id) => {
-        setOnscreenChoices(onscreenChoices.map(choice => choice.id === id ? {...choice, buttonText: e.target.value}: choice));
+        if (e.target.value.length <= 50) {
+            setOnscreenChoices(onscreenChoices.map(choice => choice.id === id ? {...choice, buttonText: e.target.value}: choice));
+        }
     }
 
     const onDeleteChoice = (id) => {
@@ -211,7 +214,14 @@ function BlockFormular() {
                                                     variant="outlined"
                                                     value={choice.buttonText}
                                                     onFocus={() => setFocusId(choice.id)}
-                                                    onChange={e => onScreenchoiceChange(e, choice.id)}/>
+                                                    onChange={e => onScreenchoiceChange(e, choice.id)}
+                                                    InputProps={{
+                                                        endAdornment: (
+                                                          <InputAdornment position="end">
+                                                            {choice.buttonText.length}/50
+                                                          </InputAdornment>
+                                                        ),
+                                                      }}/>
                                             {onscreenChoices.length > 1 &&
                                                 <Button size="small"
                                                     variant="text"
@@ -231,10 +241,14 @@ function BlockFormular() {
                         <div className='mt-2'>
                             <legend>Onscreen Question</legend>
                             <div className='drawer-section'>
-                                <span>What is your question?</span>
+                                <Box sx={{display: "flex", justifyContent: "space-between"}}>
+                                    <span>What is your question?</span>
+                                    <span>{onscreenQuestion?.question.length}/150</span>
+                                </Box>
                                 <textarea className='mt-0-5 text-area border-1'
                                         value={onscreenQuestion?.question}
                                         name='question'
+                                        maxLength={150}
                                         onChange={e => setOnscreenQuestion(x => ({...x, question: e.target.value}))}/>
                                 <FormGroup sx={{width: 'fit-content', display: 'inline-block'}}>
                                     <Switch

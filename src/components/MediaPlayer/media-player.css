@@ -6,6 +6,7 @@
     display: inline-flex;
     flex-direction: column;
     justify-content: flex-end;
+    background: black;
   }
   
 .video-player video {
